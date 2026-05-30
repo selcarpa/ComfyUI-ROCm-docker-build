@@ -1,53 +1,46 @@
 # ROCm-compatible requirements.txt for ComfyUI
-# Generated on Fri Jun 27 23:19:36 EDT 2025
-# Base image: rocm/pytorch:latest
-# Each package tested in fresh ROCm container with 300s timeout
+# Base image: rocm/pytorch:rocm7.2.4_ubuntu24.04_py3.12_pytorch_release_2.10.0
+# ComfyUI: 0.22.0
 #
-# Version Information:
-# - Python: 3.12.10
-# - PyTorch: 2.6.0+git684f6f2
-# - ROCm: 6.4.43483-a187df25c
-# - ComfyUI: e18f53c (2025-06-27)
-# - ComfyUI Tag: v0.3.43
-# - ComfyUI Version: 0.3.43
-# 
-# Legend:
-#   ✅ SAFE - can be installed without breaking ROCm
-#   ❌ BROKEN - breaks ROCm, fails to install, or times out
-#   📦 ALREADY - already installed correctly in base image
+# 📦 ALREADY = pre-installed in base image, not re-installed
 
-comfyui-frontend-package==1.23.4
-comfyui-workflow-templates==0.1.30
-comfyui-embedded-docs==0.2.3
-# 📦 ALREADY: torch
-torchsde
-# 📦 ALREADY: torchvision
-# 🌙 NIGHTLY: torchaudio (use: pip install --pre torchaudio --index-url https://download.pytorch.org/whl/nightly/rocm6.4)
-# 📦 ALREADY: numpy>=1.25.0
-einops
-transformers>=4.37.2
-tokenizers>=0.13.3
-sentencepiece
-safetensors>=0.4.2
-# 📦 ALREADY: aiohttp>=3.11.8
-# 📦 ALREADY: yarl>=1.18.0
-pyyaml
-Pillow
-# 📦 ALREADY: scipy
-# 📦 ALREADY: tqdm
-# 📦 ALREADY: psutil
-alembic
-SQLAlchemy
-kornia>=0.7.1
-spandrel
-# 📦 ALREADY: soundfile
-av>=14.2.0
-pydantic~=2.0
-pydantic-settings~=2.0
+# ── ComfyUI official packages ──────────────────────────────────
+comfyui-frontend-package==1.44.19     # Web frontend UI
+comfyui-workflow-templates==0.9.91    # Built-in workflow templates
+comfyui-embedded-docs==0.5.1           # Embedded documentation
+comfy-kitchen==0.2.10                 # Image processing utility node pack
+comfy-aimdo==0.4.5                    # AIMDO workflow enablement
 
-# Testing Summary:
-# ✅ SAFE packages: 18
-# 📦 ALREADY installed: 9
-# 🌙 NIGHTLY packages: 1
-# ❌ BROKEN packages: 0
-# Total tested: 28
+# ── PyTorch ecosystem ──────────────────────────────────────────
+# 📦 ALREADY: torch                   # Deep learning framework
+torchsde                               # SDE solvers for diffusion samplers
+# 📦 ALREADY: torchvision             # Image transforms & datasets
+# 📦 ALREADY: torchaudio              # Audio I/O
+# 📦 ALREADY: numpy>=1.25.0           # Numerical computing
+einops                                 # Einstein tensor notation, used by model architectures
+transformers>=4.50.3                   # HuggingFace text encoders (CLIP, T5, etc.)
+tokenizers>=0.13.3                     # Fast tokenization for transformers
+sentencepiece                          # Tokenizer for FLAN-T5 / some LLM text encoders
+safetensors>=0.4.2                     # Safe tensor serialization, used for model storage
+aiohttp>=3.11.8                       # Async HTTP server for ComfyUI
+yarl>=1.18.0                          # URL parsing for aiohttp
+pyyaml                                 # YAML config parsing
+Pillow                                 # Image loading & processing
+# 📦 ALREADY: scipy                   # Used by upscale models & samplers
+# 📦 ALREADY: tqdm                    # Progress bars in UI
+psutil>=6.0.0                         # System resource monitoring
+alembic                                # DB migration management for workflow metadata
+SQLAlchemy>=2.0.0                     # ORM for workflow database
+kornia>=0.7.1                         # Differentiable CV ops, used by some custom nodes
+spandrel                              # Neural network loader for upscale models
+filelock                              # File locking for concurrent model access
+requests                              # HTTP downloads (model fetching, API calls)
+simpleeval>=1.0.0                     # Safe expression evaluator for node inputs
+blake3                                # BLAKE3 hashing for model cache validation
+soundfile                             # Audio file I/O
+av>=16.0.0                           # PyAV - video/audio processing for video workflows
+pydantic~=2.0                         # Data validation, used by ComfyUI API
+pydantic-settings~=2.0                # Settings management via pydantic
+
+# ── Custom node manager ────────────────────────────────────────
+comfyui-manager==4.2.1                # ComfyUI Manager - install & update custom nodes

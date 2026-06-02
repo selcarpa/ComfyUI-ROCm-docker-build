@@ -71,3 +71,12 @@ jobs:
         run: |
           docker tag "${{ env.IMAGE_NAME }}:${{ steps.build.outputs.detailed_tag }}" "${{ env.IMAGE_NAME }}:latest"
           docker push "${{ env.IMAGE_NAME }}:latest"
+
+      - name: Update Docker Hub README
+        if: ${{ !inputs.dry_run }}
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ${{ env.IMAGE_NAME }}
+          readme-filepath: ./README_EN.md

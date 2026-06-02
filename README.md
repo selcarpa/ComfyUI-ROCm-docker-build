@@ -117,7 +117,7 @@ services:
 
 运行: `docker compose up -d`
 
-> **ComfyUI-Manager 自动恢复**：镜像内置 ComfyUI-Manager，启动时若 `custom_nodes` 卷中缺失则自动从镜像恢复。设置环境变量 `COMFYUI_MANAGER_DISABLED=true` 可关闭此行为。
+> **ComfyUI-Manager 自动恢复**：镜像内置 ComfyUI-Manager，启动时若 `custom_nodes` 卷中缺失则自动从镜像恢复，并自动添加 `--enable-manager` 参数启用管理界面。设置环境变量 `COMFYUI_MANAGER_DISABLED=true` 可关闭此行为。
 
 ## ⚡ 性能与硬件
 

@@ -117,7 +117,7 @@ services:
 
 Run with: `docker compose up -d`
 
-> **ComfyUI-Manager auto-restore**: The image ships with ComfyUI-Manager pre-installed. On startup, if missing from the `custom_nodes` volume, it is automatically restored from the image backup. Set `COMFYUI_MANAGER_DISABLED=true` to disable this behavior.
+> **ComfyUI-Manager auto-restore**: The image ships with ComfyUI-Manager pre-installed. On startup, if missing from the `custom_nodes` volume, it is automatically restored from the image backup and the `--enable-manager` flag is appended to enable the manager UI. Set `COMFYUI_MANAGER_DISABLED=true` to disable this behavior.
 
 ## ⚡ Performance & Hardware
 

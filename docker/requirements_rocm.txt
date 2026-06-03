@@ -23,7 +23,7 @@ tokenizers>=0.13.3                     # Fast tokenization for transformers
 sentencepiece                          # Tokenizer for FLAN-T5 / some LLM text encoders
 safetensors>=0.4.2                     # Safe tensor serialization, used for model storage
 aiohttp>=3.11.8                       # Async HTTP server for ComfyUI
-yarl>=1.18.0                          # URL parsing for aiohttp
+yarl>=1.24.2                          # URL parsing for aiohttp
 pyyaml                                 # YAML config parsing
 Pillow                                 # Image loading & processing
 # 📦 ALREADY: scipy                   # Used by upscale models & samplers

@@ -36,7 +36,7 @@ spandrel                              # Neural network loader for upscale models
 filelock                              # File locking for concurrent model access
 importlib-metadata                    # Import metadata for package management
 requests                              # HTTP downloads (model fetching, API calls)
-simpleeval>=1.0.0                     # Safe expression evaluator for node inputs
+simpleeval>=1.0.7                     # Safe expression evaluator for node inputs
 blake3                                # BLAKE3 hashing for model cache validation
 soundfile                             # Audio file I/O
 av>=16.0.0                           # PyAV - video/audio processing for video workflows

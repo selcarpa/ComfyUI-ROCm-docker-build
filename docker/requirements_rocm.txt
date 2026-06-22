@@ -19,7 +19,7 @@ torchsde                               # SDE solvers for diffusion samplers
 # 📦 ALREADY: numpy>=1.25.0           # Numerical computing
 einops                                 # Einstein tensor notation, used by model architectures
 transformers>=4.50.3                   # HuggingFace text encoders (CLIP, T5, etc.)
-tokenizers>=0.13.3                     # Fast tokenization for transformers
+tokenizers>=0.23.1                     # Fast tokenization for transformers
 sentencepiece                          # Tokenizer for FLAN-T5 / some LLM text encoders
 safetensors>=0.4.2                     # Safe tensor serialization, used for model storage
 aiohttp>=3.11.8                       # Async HTTP server for ComfyUI

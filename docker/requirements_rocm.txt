@@ -31,7 +31,7 @@ Pillow                                 # Image loading & processing
 psutil>=6.0.0                         # System resource monitoring
 alembic                                # DB migration management for workflow metadata
 SQLAlchemy>=2.0.0                     # ORM for workflow database
-kornia>=0.7.1                         # Differentiable CV ops, used by some custom nodes
+kornia>=0.8.3                         # Differentiable CV ops, used by some custom nodes
 spandrel                              # Neural network loader for upscale models
 filelock                              # File locking for concurrent model access
 importlib-metadata                    # Import metadata for package management

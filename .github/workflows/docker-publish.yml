@@ -28,6 +28,16 @@ on:
         required: false
         type: boolean
         default: false
+      tag_prefix:
+        description: 'Docker tag prefix (e.g. "auto-")'
+        required: false
+        type: string
+        default: ''
+      auto_latest:
+        description: 'Also push as {tag_prefix}latest'
+        required: false
+        type: boolean
+        default: false
 
 env:
   IMAGE_NAME: selcarpa/comfyui-rocm
@@ -53,7 +63,7 @@ jobs:
       - name: Build image
         id: build
         run: |
-          DETAILED_TAG="$(TZ=Asia/Shanghai date +%Y%m%d_%H%M)_comfyui_${{ inputs.comfyui_tag }}__${{ inputs.base_image_tag }}"
+          DETAILED_TAG="${{ inputs.tag_prefix }}$(TZ=Asia/Shanghai date +%Y%m%d_%H%M)_comfyui_${{ inputs.comfyui_tag }}__${{ inputs.base_image_tag }}"
           echo "detailed_tag=${DETAILED_TAG}" >> "$GITHUB_OUTPUT"
           IMAGE_NAME="${{ env.IMAGE_NAME }}" \
           COMFYUI_TAG="${{ inputs.comfyui_tag }}" \
@@ -71,6 +81,12 @@ jobs:
         run: |
           docker tag "${{ env.IMAGE_NAME }}:${{ steps.build.outputs.detailed_tag }}" "${{ env.IMAGE_NAME }}:latest"
           docker push "${{ env.IMAGE_NAME }}:latest"
+
+      - name: Push auto-latest tag
+        if: ${{ inputs.auto_latest && !inputs.dry_run }}
+        run: |
+          docker tag "${{ env.IMAGE_NAME }}:${{ steps.build.outputs.detailed_tag }}" "${{ env.IMAGE_NAME }}:${{ inputs.tag_prefix }}latest"
+          docker push "${{ env.IMAGE_NAME }}:${{ inputs.tag_prefix }}latest"
 
       - name: Update Docker Hub README
         if: ${{ !inputs.dry_run }}

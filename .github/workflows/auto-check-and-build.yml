@@ -1,0 +1,118 @@
+name: Auto Check and Build
+
+on:
+  schedule:
+    # 每天 09:00 和 21:00 (Asia/Shanghai) = UTC 01:00 和 13:00
+    - cron: '0 1,13 * * *'
+  workflow_dispatch:
+
+env:
+  CHECK_INTERVAL_HOURS: 12
+
+jobs:
+  check-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check ComfyUI latest tag
+        id: comfyui
+        run: |
+          RESPONSE=$(curl -sL "https://api.github.com/repos/Comfy-Org/ComfyUI/tags?per_page=1")
+          TAG=$(echo "$RESPONSE" | jq -r '.[0].name')
+          COMMIT_SHA=$(echo "$RESPONSE" | jq -r '.[0].commit.sha')
+
+          # 获取 commit 日期
+          COMMIT_RESPONSE=$(curl -sL "https://api.github.com/repos/Comfy-Org/ComfyUI/commits/${COMMIT_SHA}")
+          COMMIT_DATE=$(echo "$COMMIT_RESPONSE" | jq -r '.commit.committer.date')
+
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "commit_date=${COMMIT_DATE}" >> "$GITHUB_OUTPUT"
+          echo "✅ ComfyUI latest tag: ${TAG} (${COMMIT_DATE})"
+
+      - name: Check ComfyUI-Manager latest tag
+        id: manager
+        run: |
+          RESPONSE=$(curl -sL "https://api.github.com/repos/Comfy-Org/ComfyUI-Manager/tags?per_page=1")
+          TAG=$(echo "$RESPONSE" | jq -r '.[0].name')
+          COMMIT_SHA=$(echo "$RESPONSE" | jq -r '.[0].commit.sha')
+
+          COMMIT_RESPONSE=$(curl -sL "https://api.github.com/repos/Comfy-Org/ComfyUI-Manager/commits/${COMMIT_SHA}")
+          COMMIT_DATE=$(echo "$COMMIT_RESPONSE" | jq -r '.commit.committer.date')
+
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "commit_date=${COMMIT_DATE}" >> "$GITHUB_OUTPUT"
+          echo "✅ ComfyUI-Manager latest tag: ${TAG} (${COMMIT_DATE})"
+
+      - name: Check base image latest tag
+        id: base
+        run: |
+          RESPONSE=$(curl -s "https://hub.docker.com/v2/repositories/rocm/pytorch/tags?page_size=100&ordering=last_updated")
+          TAG=$(echo "$RESPONSE" | jq -r '[.results[] | select(.name | test("^rocm[0-9].*_ubuntu24\\.04_py3\\.12_pytorch")) | {name: .name, last_pushed: .last_pushed}] | sort_by(.last_pushed) | reverse | .[0].name')
+          LAST_PUSHED=$(echo "$RESPONSE" | jq -r '[.results[] | select(.name | test("^rocm[0-9].*_ubuntu24\\.04_py3\\.12_pytorch")) | {name: .name, last_pushed: .last_pushed}] | sort_by(.last_pushed) | reverse | .[0].last_pushed')
+
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "last_pushed=${LAST_PUSHED}" >> "$GITHUB_OUTPUT"
+          echo "✅ Base image latest tag: ${TAG} (${LAST_PUSHED})"
+
+      - name: Check for recent updates
+        id: check
+        run: |
+          NOW=$(date -u +%s)
+          CUTOFF=$((NOW - ${CHECK_INTERVAL_HOURS} * 3600))
+          HAS_UPDATE=false
+
+          # 检查 ComfyUI
+          COMMIT_DATE="${{ steps.comfyui.outputs.commit_date }}"
+          COMMIT_TS=$(date -d "$COMMIT_DATE" +%s 2>/dev/null || echo 0)
+          if [ "$COMMIT_TS" -gt "$CUTOFF" ]; then
+            echo "🔄 ComfyUI has a recent update: $COMMIT_DATE"
+            HAS_UPDATE=true
+          fi
+
+          # 检查 ComfyUI-Manager
+          COMMIT_DATE="${{ steps.manager.outputs.commit_date }}"
+          COMMIT_TS=$(date -d "$COMMIT_DATE" +%s 2>/dev/null || echo 0)
+          if [ "$COMMIT_TS" -gt "$CUTOFF" ]; then
+            echo "🔄 ComfyUI-Manager has a recent update: $COMMIT_DATE"
+            HAS_UPDATE=true
+          fi
+
+          # 检查 base image
+          LAST_PUSHED="${{ steps.base.outputs.last_pushed }}"
+          PUSH_TS=$(date -d "$LAST_PUSHED" +%s 2>/dev/null || echo 0)
+          if [ "$PUSH_TS" -gt "$CUTOFF" ]; then
+            echo "🔄 Base image has a recent update: $LAST_PUSHED"
+            HAS_UPDATE=true
+          fi
+
+          echo "has_update=${HAS_UPDATE}" >> "$GITHUB_OUTPUT"
+          echo "⏰ Check interval: ${CHECK_INTERVAL_HOURS}h, cutoff: $(date -u -d @$CUTOFF +%Y-%m-%dT%H:%M:%SZ)"
+
+          if [ "$HAS_UPDATE" = "true" ]; then
+            echo "📢 发现更新，将触发构建"
+          else
+            echo "✅ 无更新，跳过构建"
+          fi
+
+      - name: Trigger build
+        if: steps.check.outputs.has_update == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🚀 触发 docker-publish workflow..."
+          echo "  ComfyUI tag: ${{ steps.comfyui.outputs.tag }}"
+          echo "  ComfyUI-Manager tag: ${{ steps.manager.outputs.tag }}"
+          echo "  Base image tag: ${{ steps.base.outputs.tag }}"
+
+          gh workflow run docker-publish.yml \
+            -f comfyui_tag="${{ steps.comfyui.outputs.tag }}" \
+            -f comfyui_manager_tag="${{ steps.manager.outputs.tag }}" \
+            -f base_image_tag="${{ steps.base.outputs.tag }}" \
+            -f tag_prefix="auto-" \
+            -f auto_latest=true \
+            -f publish_as_latest=false \
+            -f dry_run=false
+
+          echo "✅ 构建已触发"

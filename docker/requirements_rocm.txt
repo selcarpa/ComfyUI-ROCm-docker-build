@@ -39,7 +39,7 @@ requests                              # HTTP downloads (model fetching, API call
 simpleeval>=1.0.7                     # Safe expression evaluator for node inputs
 blake3                                # BLAKE3 hashing for model cache validation
 soundfile                             # Audio file I/O
-av>=16.0.0                           # PyAV - video/audio processing for video workflows
+av>=17.1.0                           # PyAV - video/audio processing for video workflows
 pydantic~=2.13                         # Data validation, used by ComfyUI API
 pydantic-settings~=2.0                # Settings management via pydantic
 

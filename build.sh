@@ -9,6 +9,7 @@
 #   COMFYUI_MANAGER_TAG - ComfyUI-Manager Git tag (default: 4.2.1)
 #   BASE_IMAGE_TAG - ROCm PyTorch base image tag
 #   IMAGE_NAME     - Docker image name (default: selcarpa/comfyui-rocm)
+#   TAG_PREFIX     - Docker tag prefix (default: empty)
 
 set -e
 
@@ -17,6 +18,7 @@ IMAGE_NAME="${IMAGE_NAME:-selcarpa/comfyui-rocm}"
 COMFYUI_TAG="${COMFYUI_TAG:-v0.22.0}"
 COMFYUI_MANAGER_TAG="${COMFYUI_MANAGER_TAG:-4.2.1}"
 BASE_IMAGE_TAG="${BASE_IMAGE_TAG:-rocm7.2.4_ubuntu24.04_py3.12_pytorch_release_2.10.0}"
+TAG_PREFIX="${TAG_PREFIX:-}"
 PUSH="${PUSH:-false}"
 
 # First positional arg is version tag
@@ -29,7 +31,7 @@ for arg in "$@"; do
   fi
 done
 
-DETAILED_TAG="$(TZ=Asia/Shanghai date +%Y%m%d_%H%M)_comfyui_${COMFYUI_TAG}__${BASE_IMAGE_TAG}"
+DETAILED_TAG="${TAG_PREFIX}$(TZ=Asia/Shanghai date +%Y%m%d_%H%M)_comfyui_${COMFYUI_TAG}__${BASE_IMAGE_TAG}"
 
 echo "🐳 Building ComfyUI ROCm Docker image..."
 echo "📦 Tags: ${IMAGE_NAME}:${VERSION}, ${IMAGE_NAME}:${DETAILED_TAG}"

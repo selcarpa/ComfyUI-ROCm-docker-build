@@ -69,6 +69,7 @@ jobs:
           COMFYUI_TAG="${{ inputs.comfyui_tag }}" \
           COMFYUI_MANAGER_TAG="${{ inputs.comfyui_manager_tag }}" \
           BASE_IMAGE_TAG="${{ inputs.base_image_tag }}" \
+          TAG_PREFIX="${{ inputs.tag_prefix }}" \
           ./build.sh
 
       - name: Push detailed tag

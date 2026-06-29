@@ -8,7 +8,7 @@
 comfyui-frontend-package==1.45.19    # Web frontend UI
 comfyui-workflow-templates==0.10.3    # Built-in workflow templates
 comfyui-embedded-docs==0.5.5           # Embedded documentation
-comfy-kitchen==0.2.10                 # Image processing utility node pack
+comfy-kitchen==0.2.14                 # Image processing utility node pack
 comfy-aimdo==0.4.10                    # AIMDO workflow enablement
 
 # ── PyTorch ecosystem ──────────────────────────────────────────

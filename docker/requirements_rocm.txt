@@ -41,7 +41,7 @@ blake3                                # BLAKE3 hashing for model cache validatio
 soundfile                             # Audio file I/O
 av>=17.1.0                           # PyAV - video/audio processing for video workflows
 pydantic~=2.13                         # Data validation, used by ComfyUI API
-pydantic-settings~=2.0                # Settings management via pydantic
+pydantic-settings~=2.14                # Settings management via pydantic
 
 # ── Custom node manager ────────────────────────────────────────
 comfyui-manager==4.2.1                # ComfyUI Manager - install & update custom nodes

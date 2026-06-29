@@ -44,4 +44,4 @@ pydantic~=2.13                         # Data validation, used by ComfyUI API
 pydantic-settings~=2.0                # Settings management via pydantic
 
 # ── Custom node manager ────────────────────────────────────────
-comfyui-manager==4.2.1                # ComfyUI Manager - install & update custom nodes
+comfyui-manager==4.2.2                # ComfyUI Manager - install & update custom nodes

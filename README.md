@@ -4,7 +4,7 @@
 
 🔥 **支持 AMD ROCm 的 ComfyUI** — 在 AMD GPU 上运行 ComfyUI，预装优化过的 ROCm 兼容依赖。
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/selcarpa/comfyui-rocm)](https://hub.docker.com/r/selcarpa/comfyui-rocm) [![ROCm](https://img.shields.io/badge/ROCm-7.2.4+-green)](https://rocm.docs.amd.com/) [![AMD GPU](https://img.shields.io/badge/AMD-RX%207000%2B-red)](https://www.amd.com/en/products/graphics/desktops/radeon.html) [![License](https://img.shields.io/github/license/selcarpa/comfyui-rocm)](https://github.com/selcarpa/comfyui-rocm/blob/main/LICENSE) [![Last Commit](https://img.shields.io/github/last-commit/selcarpa/comfyui-rocm)](https://github.com/selcarpa/comfyui-rocm/commits/main)
+[![Docker Pulls](https://img.shields.io/docker/pulls/selcarpa/comfyui-rocm)](https://hub.docker.com/r/selcarpa/comfyui-rocm) [![ROCm](https://img.shields.io/badge/ROCm-7.2.4+-green)](https://rocm.docs.amd.com/) [![AMD GPU](https://img.shields.io/badge/AMD-RX%206000%2F7000%2F9000-red)](https://www.amd.com/en/products/graphics/desktops/radeon.html) [![License](https://img.shields.io/github/license/selcarpa/comfyui-rocm)](https://github.com/selcarpa/comfyui-rocm/blob/main/LICENSE) [![Last Commit](https://img.shields.io/github/last-commit/selcarpa/comfyui-rocm)](https://github.com/selcarpa/comfyui-rocm/commits/main)
 
 ![ComfyUI 界面](Screenshot.png)
 *ComfyUI 在 AMD ROCm 上运行示例*
@@ -39,7 +39,7 @@ docker compose up -d
 
 | 组件 | 要求 |
 | ---------- | ------------------------------------------ |
-| **GPU** | AMD RX 7000/9000+ 系列（支持 ROCm） |
+| **GPU** | AMD RX 6000/7000/9000 系列（RDNA 2/3/4，基于 ROCm 7.2.4 兼容性）[^1] |
 | **VRAM** | 最低 8GB（推荐 16GB+） |
 | **OS** | Linux（推荐 Ubuntu 24.04+） |
 | **Docker** | 最新版本，支持 GPU |
@@ -122,7 +122,9 @@ services:
 ## ⚡ 性能与硬件
 
 ### 测试硬件
-- **AMD Radeon RX 7800 XT**（16GB VRAM）✅
+- **AMD Radeon RX 7800 XT**（16GB VRAM, RDNA 3, gfx1101）✅
+
+> 本项目仅在 RX 7800 XT 上进行过实际测试。根据 [AMD ROCm 官方兼容性矩阵](https://rocm.docs.amd.com/en/latest/compatibility/compatibility-matrix.html)，其他基于 ROCm 7.2.4 兼容的 AMD 显卡理论上可运行。如遇问题请提交 [GitHub Issues](https://github.com/selcarpa/ComfyUI-ROCm/issues)。
 
 ### 性能指标
 - **生成时间**: ~30-60s（512x512 图像）
@@ -134,6 +136,18 @@ services:
 - 挂载持久卷可避免重复下载模型
 - 从 `default` 模型开始，按需升级
 - 使用快速 SSD 以获得最佳性能
+
+### GPU 兼容性说明
+
+根据 [AMD ROCm 官方兼容性矩阵](https://rocm.docs.amd.com/en/latest/compatibility/compatibility-matrix.html)，ROCm 7.2.4 理论上支持以下 AMD 显卡系列：
+
+| 系列 | 架构 | gfx代号 | 代表型号 |
+|------|------|---------|---------|
+| RX 9000 | RDNA 4 | gfx1200/gfx1201 | RX 9070 XT, RX 9070, RX 9060 |
+| RX 7000 | RDNA 3 | gfx1100/gfx1101/gfx1102 | RX 7900 XTX/XT, RX 7800 XT, RX 7700, RX 7600 |
+| RX 6000 | RDNA 2 | gfx1030/gfx1031/gfx1032 | RX 6950 XT, RX 6800 XT, RX 6700 XT, RX 6600 XT |
+
+> **来源**: [AMD GPU 架构规格](https://rocm.docs.amd.com/en/latest/reference/gpu-arch-specs.html)
 
 ## 🔍 故障排除
 
@@ -156,7 +170,7 @@ services:
 
 | 角度 | 变更说明 |
 |------|---------|
-| **ROCm 升级** | 基础镜像从 ROCm 6.4.1 → **7.2.4**，PyTorch 2.6.0 → **2.10.0**，兼容更多 AMD GPU（RX 7000/9000+）；上游仓库支持 RX 6000 系列，本项目仅支持 RX 7000+ |
+| **ROCm 升级** | 基础镜像从 ROCm 6.4.1 → **7.2.4**，PyTorch 2.6.0 → **2.10.0**；理论上支持 RX 6000/7000/9000 全系列（基于 ROCm 7.2.4 兼容性），仅在 RX 7800 XT 上实际测试 |
 | **ComfyUI 版本锁定** | 从拉取最新代码改为按指定标签（`v0.22.0`）检出，构建可复现 |
 | **依赖优化** | 全面梳理 Python 依赖，剔除与 ROCm 不兼容的包，新增 `comfyui-manager` 等节点生态包，统一管理和版本锁定 |
 | **节点管理** | 预装 ComfyUI-Manager，构建时克隆 + 备份，启动时自动恢复到 volume，无需手动安装 |
@@ -178,6 +192,8 @@ services:
 - [ComfyUI-ROCm](https://github.com/corundex/ComfyUI-ROCm) — 上游 AMD ROCm 移植参考仓库
 - [AMD ROCm](https://rocm.docs.amd.com/) — 开源 GPU 计算平台
 - ROCm 社区对 AMD GPU AI 的支持
+
+[^1]: AMD 官方兼容性矩阵显示 ROCm 7.2.4 支持 gfx1030 (RX 6000)、gfx1100/gfx1101 (RX 7000)、gfx1200/gfx1201 (RX 9000) 等多个 GPU 系列。详见 [ROCm Compatibility Matrix](https://rocm.docs.amd.com/en/latest/compatibility/compatibility-matrix.html) 和 [AMD GPU Architecture Specifications](https://rocm.docs.amd.com/en/latest/reference/gpu-arch-specs.html)。
 
 ---
 

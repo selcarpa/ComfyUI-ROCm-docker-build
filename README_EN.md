@@ -111,7 +111,6 @@ services:
       - ./data/user:/workspace/ComfyUI/user
     environment:
       - HIP_VISIBLE_DEVICES=0
-      - CUDA_VISIBLE_DEVICES=""
     restart: unless-stopped
 ```
 

@@ -37,7 +37,6 @@ services:
       - ./data/temp:/workspace/ComfyUI/temp
     environment:
       - HIP_VISIBLE_DEVICES=0
-      - CUDA_VISIBLE_DEVICES=""
     restart: unless-stopped
 ```
 
@@ -76,7 +75,6 @@ data/models/
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `HIP_VISIBLE_DEVICES` | `0` | GPU device index |
-| `CUDA_VISIBLE_DEVICES` | `""` | Must be empty |
 | `COMFYUI_MANAGER_DISABLED` | `false` | Disable auto-restore of ComfyUI-Manager |
 
 ---
@@ -144,7 +142,6 @@ services:
       - ./data/temp:/workspace/ComfyUI/temp
     environment:
       - HIP_VISIBLE_DEVICES=0
-      - CUDA_VISIBLE_DEVICES=""
     restart: unless-stopped
 ```
 

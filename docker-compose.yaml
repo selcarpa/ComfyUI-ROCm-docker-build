@@ -39,8 +39,6 @@ services:
     environment:
       # ROCm: select GPU device index
       - HIP_VISIBLE_DEVICES=0
-      # Disable CUDA (use ROCm/HIP instead)
-      - CUDA_VISIBLE_DEVICES=""
       # Disable auto-restore of ComfyUI-Manager from image backup
       # (uncomment if you manage custom_nodes yourself via volume)
       # - COMFYUI_MANAGER_DISABLED=true

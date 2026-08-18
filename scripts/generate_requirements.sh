@@ -43,7 +43,7 @@ for line in comfyui_reqs.split('\n'):
     match = re.match(r'^([a-zA-Z0-9_-]+)([=<>!]+)(.+)$', line)
     if match:
         pkg_name = match.group(1)
-        if pkg_name.startswith('comfyui') and pkg_name != 'comfyui-manager':
+        if (pkg_name.startswith('comfyui-') or pkg_name.startswith('comfy-')) and pkg_name != 'comfyui-manager':
             comfyui_packages[pkg_name] = line
 
 updated_lines = []
@@ -58,7 +58,7 @@ for line in rocm_reqs.split('\n'):
     match = re.match(r'^([a-zA-Z0-9_-]+)==([^#\s]+)(.*)$', stripped)
     if match:
         pkg_name = match.group(1)
-        if pkg_name.startswith('comfyui') and pkg_name != 'comfyui-manager':
+        if (pkg_name.startswith('comfyui-') or pkg_name.startswith('comfy-')) and pkg_name != 'comfyui-manager':
             if pkg_name in comfyui_packages:
                 indent = line[:len(line) - len(stripped)]
                 updated_lines.append(indent + comfyui_packages[pkg_name])

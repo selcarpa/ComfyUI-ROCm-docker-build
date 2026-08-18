@@ -51,6 +51,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Generate requirements file for this build
+        run: |
+          ./scripts/generate_requirements.sh "${{ inputs.comfyui_tag }}" ./requirements_rocm.txt
+          cat ./requirements_rocm.txt
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 

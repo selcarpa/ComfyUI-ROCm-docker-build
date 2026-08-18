@@ -4,7 +4,6 @@
 ARG BASE_IMAGE_TAG=rocm7.2.4_ubuntu24.04_py3.12_pytorch_release_2.10.0
 FROM rocm/pytorch:${BASE_IMAGE_TAG}
 
-# Set working directory
 WORKDIR /workspace
 
 # Install system dependencies
@@ -40,11 +39,10 @@ RUN git clone --branch "${COMFYUI_MANAGER_TAG}" --depth 1 \
   /workspace/ComfyUI/custom_nodes/comfyui-manager && \
   cp -r /workspace/ComfyUI/custom_nodes /workspace/.default_nodes
 
-# Copy ROCm-tested requirements file
-COPY docker/requirements_rocm.txt /workspace/
+# Copy requirements file (pre-generated at build time with synced comfyui versions)
+COPY requirements_rocm.txt /workspace/
 
-# Install Python dependencies using ROCm-compatible requirements
-# These files have been tested on real AMD hardware and filter out packages that break ROCm
+# Install Python dependencies using the generated requirements
 RUN pip install --no-cache-dir -r /workspace/requirements_rocm.txt
 
 # Copy startup script and sample workflow
@@ -62,4 +60,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:8188/ || exit 1
 
 CMD ["/workspace/startup.sh"]
-

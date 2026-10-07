@@ -14,6 +14,12 @@ RUN apt-get update && apt-get install -y \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
+# Install python-is-python3 if python command is not found
+RUN if ! command -v python &> /dev/null; then \
+      apt-get update && apt-get install -y python-is-python3 && \
+      apt-get clean && rm -rf /var/lib/apt/lists/*; \
+    fi
+
 # Clone ComfyUI at specified tag
 ARG COMFYUI_TAG
 RUN git clone --branch "${COMFYUI_TAG}" --depth 1 https://github.com/comfyanonymous/ComfyUI.git
